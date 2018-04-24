@@ -1,0 +1,11 @@
+#ifndef TAPSIM_VERSION_H
+#define TAPSIM_VERSION_H
+
+#define TAPSIM_VERSION "1.0b"
+#define TAPSIM_REVISION "r3225"
+
+#define TAPSIM_DIST_VERSION "v1.0b_r3225"
+#define TAPSIM_DIST_DATE "10/08/13"
+#define TAPSIM_DIST_TIME "15:24:51"
+
+#endif
