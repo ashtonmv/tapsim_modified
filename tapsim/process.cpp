@@ -17,7 +17,7 @@
 * You should have received a copy of the GNU General Public License     *
 * along with this program.  If not, see 'http://www.gnu.org/licenses'   *
 *                                                                       *
-************************************************************************/ 
+************************************************************************/
 
 #include "process.h"
 
@@ -57,13 +57,13 @@ void Process::initialization(const char* configFile, const char* nodeFile, Syste
 	for (std::list<Configuration::NodeId>::const_iterator i = ids.begin(); i != ids.end(); i++)
 		info::begin() << "\t\t - " << system->configTable[*i].name() << ": #" << i->toValue() << std::endl;
 	info::begin() << "\t-> total number of types: " << ids.size() << std::endl;
-	
+
 	info::begin() << "Reading node data from file \"" << nodeFile << "\"" << std::endl;
 
 	{
 		int withPotentials;
 		File_Io::readGeomGrid(nodeFile,&system->geomTable,&system->gridTable,0,&withPotentials);
-		
+
 		if (!withPotentials)
 		{
 			for (int i = 0; i < system->geomTable.numNodes(); i++)
@@ -79,11 +79,11 @@ void Process::initialization(const char* configFile, const char* nodeFile, Syste
 		else
 			info::begin() << "\t-> setting included potential values" << std::endl;
 	}
-	
+
 	std::map<Configuration::NodeId,int> nodeStatistics;
 	for (int i = 0; i < system->gridTable.numNodes(); i++)
 		nodeStatistics[system->gridTable.id(i)]++;
-	
+
 	info::begin() << "\t-> node statistics:" << std::endl;
 	for (std::map<Configuration::NodeId,int>::const_iterator i = nodeStatistics.begin(); i != nodeStatistics.end(); i++)
 		info::begin() << "\t\t - " << system->configTable[i->first].name() << ": " << i->second << std::endl;
@@ -116,7 +116,7 @@ void Process::initialization(const char* configFile, const char* nodeFile, Syste
 	info::begin() << "\t-> constrained geometric extents: ";
 	info::out() << system->geomTable.constrainedMin() << " - " << system->geomTable.constrainedMax();
 	info::out() << std::endl;
-	
+
 	// ***
 
 	startTime = std::time(0);
@@ -137,7 +137,7 @@ void Process::relaxation(const float threshold, const unsigned int cycleSize, co
 	info::begin() << "Error threshold: " << threshold << std::endl;
 	info::begin() << "Number of iterations per cycle: " << cycleSize << std::endl;
 	info::begin() << "Deviation queue-size: " << queueSize << std::endl;
-	
+
 	time_t startTime = std::time(0);
 
 	try
@@ -210,7 +210,7 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 	if (std::strlen(filename) == 0)
 	{
 		// fall back on internal defaults:
-		
+
 		std::list<File_Io::KeyValue> defaultParams;
 		makeIniList(&defaultParams);
 
@@ -218,8 +218,8 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 		{
 			if (i->first.empty()) continue;
 			const std::pair<std::map<std::string,std::string>::iterator,bool> result = defaults.insert(*i);
-			
-			if (!result.second) throw std::runtime_error("Process::EvaporationOptions::setDefaults(): duplicate default keys!"); 
+
+			if (!result.second) throw std::runtime_error("Process::EvaporationOptions::setDefaults(): duplicate default keys!");
 		}
 	}
 	else
@@ -260,7 +260,7 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'TRAJECTORY_CHUNK_SIZE' error!");
 
 	// ***
-	
+
 	entry = defaults.find("GRID_FILENAME");
 	if (defaults.end() == entry)
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'GRID_FILENAME' error!");
@@ -305,14 +305,14 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 	else
 		obj->geometryFile = entry->second;
 
-	
+
 	entry = defaults.find("GEOMETRY_BINARY_OUTPUT");
 	if (defaults.end() == entry || std::sscanf(entry->second.c_str(),"%d",&obj->geometryMode) != 1)
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'GEOMETRY_BINARY_OUTPUT' error!");
 
 	{
 		unsigned int hexValue;
-		
+
 		entry = defaults.find("GEOMETRY_CONTENTS");
 		if (defaults.end() == entry || std::sscanf(entry->second.c_str(),"%x",&hexValue) != 1)
 			throw std::runtime_error("EvaporationOptions::setDefaults(): 'GEOMETRY_CONTENTS' error!");
@@ -346,7 +346,7 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'METHOD_EVAPORATION_CHOICE' error!");
 
 	// ***
-	
+
 	entry = defaults.find("VACUUM_CELL_IDENTIFIER");
 	if (defaults.end() == entry)
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'VACUUM_CELL_IDENTIFIER' error!");
@@ -384,10 +384,10 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'TRAJECTORY_NO_INITIAL_VELOCITY' error!");
 
 	// ***
-	
+
 	obj->initShrinkage = 0.0f;
 	obj->shrinkLimit = std::numeric_limits<float>::max();
-	
+
 	obj->initEventCnt = 0;
 	obj->eventCntLimit = std::numeric_limits<unsigned int>::max();
 
@@ -396,7 +396,7 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 	entry = defaults.find("VOLTAGE_QUEUE_SIZE");
 	if (defaults.end() == entry || std::sscanf(entry->second.c_str(),"%d",&obj->voltageQueueSize) != 1)
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'VOLTAGE_QUEUE_SIZE' error!");
-	
+
 	// ***
 
 	entry = defaults.find("LOCAL_RELAXATION_ERROR_THRESHOLD");
@@ -418,7 +418,7 @@ void Process::EvaporationOptions::setDefaults(const char* filename, EvaporationO
 	entry = defaults.find("GLOBAL_RELAXATION_STEPS");
 	if (defaults.end() == entry || std::sscanf(entry->second.c_str(),"%u",&obj->relaxGlobalCycles) != 1)
 		throw std::runtime_error("EvaporationOptions::setDefaults(): 'GLOBAL_RELAXATION_STEPS' error!");
-	
+
 	// ***
 
 	entry = defaults.find("REFRESH_RELAXATION_INTERVAL");
@@ -450,20 +450,20 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 		{
 			resultsHandle.init(options.resultsFile.c_str(),options.resultsMode,options.delayTime,options.resultsChunkSize);
 			resultsHandle.setHeader(outputHeader.c_str());
-			
-			
+
+
 			info::begin() << "Logging evaporation events in file: \"" << options.resultsFile << "\"";
 
 			info::out() << " (";
 
 			if (options.resultsMode == File_Io::ASCII)
-				info::out() << "ascii mode"; 
+				info::out() << "ascii mode";
 			else
 				info::out() << "binary mode";
 
 			if (options.resultsChunkSize > 0)
-				info::out() << ", chunk-size = " << options.resultsChunkSize; 
-			else 
+				info::out() << ", chunk-size = " << options.resultsChunkSize;
+			else
 				info::out() << "no chunks";
 
 			info::out() << ")" << std::endl;
@@ -476,14 +476,14 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 		if (!options.trajectoryFile.empty())
 		{
 			trajectoryHandle.init(options.trajectoryFile.c_str(),options.trajectoryMode,options.delayTime,options.trajectoryChunkSize);
-			
+
 			info::begin() << "Logging trajectory information in file: \"" << options.trajectoryFile << "\"";
-			
+
 			info::out() << " (";
 
 			if (options.trajectoryMode == File_Io::ASCII)
 				info::out() << "ascii mode";
-			else 
+			else
 				info::out() << "binary mode";
 
 			if (options.trajectoryChunkSize > 0)
@@ -503,14 +503,14 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			gridHandle.init(options.gridFile.c_str(),&system->geomTable,&system->configTable,options.gridMode,options.delayTime);
 
 			info::begin() << "Logging grid data in file: \"" << options.gridFile << "\"";
-			
+
 			info::out() << " (";
 
 			if (options.gridMode == File_Io::ASCII)
 				info::out() << "acii mode";
 			else
 				info::out() << "binary mode";
-			
+
 			info::out() << ")" << std::endl;
 		}
 
@@ -523,14 +523,14 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			surfaceHandle.init(options.surfaceFile.c_str(),system,options.surfaceMode,options.delayTime);
 
 			info::begin() << "Logging surface information in file: \"" << options.surfaceFile << "\"";
-			
+
 			info::out() << " (";
 
 			if (options.surfaceMode == File_Io::ASCII)
 				info::out() << "acii mode";
 			else
 				info::out() << "binary mode";
-			
+
 			info::out() << ")" << std::endl;
 		}
 
@@ -555,7 +555,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			default:
 				throw std::runtime_error("evaporation(): Unknown method for computing evaporation probabilies!");
 		}
-		
+
 		info::out() << std::endl;
 
 	// *** evaporation condition
@@ -573,26 +573,26 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			default:
 				throw std::runtime_error("evaporation(): Unknown method for determining next evaporation event!");
 		}
-		
+
 		info::out() << std::endl;
 
 
 	// *** general parameters used for trajectory computation
-		
+
 		info::begin() << "Parameters used for trajectory computation:" << std::endl;
 		info::begin() << "\t-> integrator type = " << Trajectory_3d::integrator_str(options.trajectoryIntegrator) << std::endl;
 		info::begin() << "\t-> stepper type = " << Trajectory_3d::stepper_str(options.trajectoryStepper) << std::endl;
 		info::begin() << "\t-> initial time step = " << options.trajectoryTimeStep << " s" << std::endl;
 		info::begin() << "\t-> time step limit = " << options.trajectoryTimeStepLimit << " s" << std::endl;
 		info::begin() << "\t-> error threshold = " << options.trajectoryErrorThreshold << std::endl;
-		
+
 	// *** some other settings which affect the trajectories
-		
+
 		if (options.fixedInitialPosition)
 			info::begin() << "Initial position of atoms is fixed (= lattice position)." << std::endl;
 		else
 			info::begin() << "Initial position of atoms is NOT fixed (not implemented?)." << std::endl;
-		
+
 		if (options.noInitialVelocity)
 			info::begin() << "Initial velocity of atoms is zero." << std::endl;
 		else
@@ -603,13 +603,13 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 	// *** look for surface sites and do initialization of the surface table
 
 		Surface_3d::Table surfaceTable;
-		
+
 		surfaceTable.setVacuumId(system->configTable[options.vacuumName.c_str()].id());
 
 		info::begin() << "Vacuum cells are defined by cell-type named ";
 		info::out() << "\"" << system->configTable[surfaceTable.vacuumId()].name() << "\"";
 		info::out() << std::endl;
-		
+
 		surfaceTable.init(*system);
 
 		info::begin() << "Initial number of surface sites: " << surfaceTable.nodes().size() << std::endl;
@@ -617,19 +617,19 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 		Surface_3d::evap_compute_specificFields(&surfaceTable,*system); // initializes the scaling reference value;
 		Surface_3d::evap_compute_probabilities(options.probMode,&surfaceTable,*system);
 
-		info::begin() << "Reference value for voltage/time rescaling: " << surfaceTable.scalingReference() << std::endl; 
-		
+		info::begin() << "Reference value for voltage/time rescaling: " << surfaceTable.scalingReference() << std::endl;
+
 	// *** look for surface site with maximum z-position
 
 		float initApexZ = system->geomTable.nodeCoords(surfaceTable.apex(*system)->index()).z();
-		
+
 		info::begin() << "Initial apex position is at z = " << initApexZ;
 
 		if (options.initShrinkage != 0.0f) info::out() << " (memorized shrinkage = " << options.initShrinkage << ")";
 		info::out() << std::endl;
 
-	// *** backup / output of the initial state
-		
+  // *** backup / output of the initial state
+
 		if (!options.geometryFile.empty())
 		{
 			info::begin() << "Writing geometry information to file \"" << options.geometryFile << "\"" << std::endl;
@@ -642,32 +642,34 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 		if (!options.surfaceFile.empty()) surfaceHandle.push(options.initEventCnt,surfaceTable);
 
-    // *** assign ids to each atom based on their coordination numbers.
+	// BEGIN ADDED BY M. ASHTON
+  // *** assign ids to each atom based on their coordination numbers.
 
-        int nNodes = system->gridTable.numNodes();
-        for (int i=0; i < nNodes; i++)
+    int nNodes = system->gridTable.numNodes();
+    for (int i=0; i < nNodes; i++)
+    {
+        if (system->gridTable.node(i).id().toValue() >= 10)
         {
-            if (system->gridTable.node(i).id().toValue() >= 10)
+            int numNeighbours = 0;
+            for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
             {
-                int numNeighbours = 0;
-                for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
+                int neighborIndex = system->gridTable.node(i).neighbour(j);
+                if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
                 {
-                    int neighborIndex = system->gridTable.node(i).neighbour(j);
-                    if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
-                    {
-                        numNeighbours++;
-                    }
+                    numNeighbours++;
                 }
-                int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
-                system->gridTable.node(i).setId(newId);
-                if (newId > 19) system->gridTable.node(i).setId(19);
             }
+            int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
+            system->gridTable.node(i).setId(newId);
+            if (newId > 19) system->gridTable.node(i).setId(19);
         }
+    }
+	// END ADDED BY M. ASHTON
 
 	// *** start evaporation sequence
 
 	info::begin() << "Beginning evaporation sequence." << std::endl;
-	
+
 	std::queue<float> voltageQueue;
 	float voltageQueueSum(0.0f);
 
@@ -692,7 +694,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 		// ***
 
 		resultsData.eventIndex = ++eventCnt;
- 
+
 		{
 			resultsData.simTime = std::difftime(std::time(0),startTime);
 			resultsData.simTime /= 60.0f;
@@ -706,7 +708,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			{
 				char eventString[100];
 				std::sprintf(eventString,"#%08u",eventCnt);
-				
+
 				info::begin() << eventString << " Time is " << resultsData.simTime;
 				info::out() << " min (" << (resultsData.eventIndex - options.initEventCnt)/resultsData.simTime << " atoms/min)";
 				info::out() << ", apex position is at " << system->geomTable.nodeCoords(surfaceTable.apex(*system)->index());
@@ -729,12 +731,12 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			// *** collect specific data
 
 			resultsData.nodeIndex = node->index();
-			
+
 			resultsData.nodeId = system->gridTable.id(resultsData.nodeIndex);
 			resultsData.nodeNumber= system->gridTable.number(resultsData.nodeIndex);
 
 			resultsData.probability = node->probability();
-			
+
 			resultsData.potentialBefore = system->gridTable.potential(resultsData.nodeIndex);
 			resultsData.fieldBefore = system->gridTable.field_o1(resultsData.nodeIndex,system->geomTable);
 
@@ -748,9 +750,9 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			info::out() << " with field strength " << resultsData.fieldBefore.length() << " V/m" << std::endl;
 			info::begin() << "Node type is \"" << system->configTable[resultsData.nodeId].name() << "\"" << std::endl;
 			info::begin() << "Unique number is " << resultsData.nodeNumber.toValue() << std::endl;
- 
+
 			info::begin() << "Related probability: " << 100.0f * node->probability() << "%" << std::endl;
- 
+
 			info::begin() << "*** Clocks (select atom for evaporation): ";
 			info::out() << (std::clock() - startClock) / static_cast<float>(CLOCKS_PER_SEC)  * 1.0e3f;
 			info::out() << " ms" << std::endl;
@@ -766,45 +768,45 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
  			evap_takeAway(system,&surfaceTable,resultsData.nodeIndex);
 
-            //for each cell that neighbored the evaporated atom...
-            for (int i = 0; i < system->gridTable.node(resultsData.nodeIndex).numNeighbours(); i++)
-            {
-                const int nnIndex = system->gridTable.node(resultsData.nodeIndex).neighbour(i);
-                if (system->gridTable.id(nnIndex) == system->configTable[options.vacuumName.c_str()].id() && system->geomTable.voronoiArea(resultsData.nodeIndex,nnIndex,1.0f) > 0.0f)
-                {
-                    ; // it's just a vacuum node
-                }
+			// BEGIN ADDED BY M. ASHTON
+      //for each cell that neighbored the evaporated atom,
+      for (int i = 0; i < system->gridTable.node(resultsData.nodeIndex).numNeighbours(); i++)
+      {
+          const int nnIndex = system->gridTable.node(resultsData.nodeIndex).neighbour(i);
+          if (system->gridTable.id(nnIndex) == system->configTable[options.vacuumName.c_str()].id() && system->geomTable.voronoiArea(resultsData.nodeIndex,nnIndex,1.0f) > 0.0f)
+          {
+              ; // it's just a vacuum node
+          }
 
-                else // it's not a vacuum node, so reduce its id by one (id's are based on coordination number).
-                {
-                    int oldId = system->configTable[system->gridTable.node(nnIndex).id()].id().toValue();
-                    int newId = 0;
-                    if (oldId % 10 == 0 or oldId < 10)
-                    {
-                        newId = oldId;
-                    }
-                    else
-                    {
-                        newId = oldId - 1;
-                    }
-                    system->gridTable.node(nnIndex).setId(newId);
-                }
+          else // it's not a vacuum node, so reduce its id by one (id's are based on coordination number).
+          {
+              int oldId = system->configTable[system->gridTable.node(nnIndex).id()].id().toValue();
+              int newId = 0;
+              if (oldId % 10 == 0 or oldId < 10)
+              {
+                  newId = oldId;
+              }
+              else
+              {
+                  newId = oldId - 1;
+              }
+              system->gridTable.node(nnIndex).setId(newId);
+          }
+      }
+			// END ADDED BY M. ASHTON
 
-            }
-
-
-            #ifdef VERBOSE
-            info::begin() << "Selected atom is removed from grid (#" << resultsData.eventIndex << ")." << std::endl;
-            info::begin() << "New number of surface-cells: " << surfaceTable.nodes().size() << std::endl;
+      #ifdef VERBOSE
+      info::begin() << "Selected atom is removed from grid (#" << resultsData.eventIndex << ")." << std::endl;
+      info::begin() << "New number of surface-cells: " << surfaceTable.nodes().size() << std::endl;
 			info::begin() << "*** Clocks (evaporation): ";
 			info::out() << (std::clock() - startClock) / static_cast<float>(CLOCKS_PER_SEC)  * 1.0e3f;
 			info::out() << " ms" << std::endl;
 			#endif
-			
+
 			#ifdef DEMO_MESH_MODE
 			const Geometry_3d::Point position = system->geomTable.nodeCoords(resultsData.node);
 			const Configuration::NodeId neumannId = system->configTable["Neumann"].id();
-			
+
 			for (int i = 0; i < system->geomTable.numNodes(); i++)
 			{
 				if (i == resultsData.node) continue;
@@ -871,7 +873,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 				info::out() << "(deviation = " << error.deviation() << ", slope = " << error.slope() << ")." << std::endl;
 				#endif
 			}
-			
+
 			if (options.refreshInterval > 0 && (options.initEventCnt + resultsData.eventIndex) % options.refreshInterval == 0)
 			{
 				try
@@ -899,7 +901,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			#endif
 		}
 
-		// IV) update evaporation probabilities and surface data 
+		// IV) update evaporation probabilities and surface data
 
 		{
 			#ifdef VERBOSE
@@ -908,7 +910,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			Surface_3d::evap_compute_specificFields(&surfaceTable,*system); // updates the scaling reference value
 			Surface_3d::evap_compute_probabilities(options.probMode,&surfaceTable,*system);
-			
+
 			#ifdef VERBOSE
 			info::begin() << "*** Clocks (compute/update evaporation-probabilities): ";
 			info::out() << (std::clock() - startClock) / static_cast<float>(CLOCKS_PER_SEC)  * 1.0e3;
@@ -927,7 +929,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			float charge = system->configTable[resultsData.nodeId].evapCharge();	// [charge] = 1
 			charge *= Trajectory_3d::eCharge;					// [charge] = C
-		
+
 			float mass = system->configTable[resultsData.nodeId].mass();		// [mass] = amu
 			mass *= Trajectory_3d::amu2kg;						// [mass] = kg
 
@@ -944,16 +946,16 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 				velocity = evap_initialVelocity(system->gridTable.node(resultsData.nodeIndex).id(),system->configTable);
 
 			// ***
-		
+
 			resultsData.trajectory.setGeometry(&system->geomTable);
 			resultsData.trajectory.setGrid(&system->gridTable);
-		
+
 			resultsData.trajectory.setIntegratorType(options.trajectoryIntegrator);
 			resultsData.trajectory.setStepperType(options.trajectoryStepper);
 			resultsData.trajectory.setTimeStepLimit(options.trajectoryTimeStepLimit);
 
 			const int tetGuessIndex = system->geomTable.node(resultsData.nodeIndex).associatedTetrahedron;
-			
+
 			resultsData.trajectory.init(position,velocity,charge,mass,tetGuessIndex);
 			resultsData.trajectory.integrate(options.trajectoryTimeStep,options.trajectoryErrorThreshold);
 			resultsData.trajectory.extrapolate(Geometry_3d::Point::Z,system->geomTable.max().z());
@@ -962,17 +964,17 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			#ifdef VERBOSE
 			info::open("trajectory");
-		
+
 			info::begin() << "mass = " << resultsData.trajectory.mass() << " kg" << std::endl;
 			info::begin() << "charge = " << resultsData.trajectory.charge() << " C" << std::endl;
-		
+
 			info::begin() << "initial position = " << resultsData.trajectory.data().front().position() << " m" << std::endl;
 			info::begin() << "final position = " << resultsData.trajectory.data().back().position() << " m" << std::endl;
-		
+
 			info::begin() << "error estimation =  " << resultsData.trajectory.error_estimate().position() << std::endl;
-		
+
 			info::close("trajectory");
-		
+
 			info::begin() << "*** Clocks (trajectory): ";
 			info::out() << (std::clock() - startClock) / static_cast<float>(CLOCKS_PER_SEC)  * 1.0e3f;
 			info::out() << " ms" << std::endl;
@@ -990,7 +992,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			std::vector<Trajectory_3d::phaseVector>::const_reverse_iterator backIndex = resultsData.trajectory.data().rbegin();
 			while (resultsData.trajectory.data().rend() != backIndex && backIndex->tetIndex() < 0) backIndex++;
 
-			if (resultsData.trajectory.data().rend() != backIndex && resultsData.fieldBefore.length() != 0.0f) 
+			if (resultsData.trajectory.data().rend() != backIndex && resultsData.fieldBefore.length() != 0.0f)
 			{
 				// *** compute measurement voltage
 
@@ -1003,18 +1005,18 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 				voltageQueue.push(tmpVoltage);
 				voltageQueueSum += tmpVoltage;
-					
+
 				while (voltageQueue.size() > options.voltageQueueSize)
 				{
 					voltageQueueSum -= voltageQueue.front();
 					voltageQueue.pop();
 				}
-					
+
 				resultsData.voltage = voltageQueueSum;
 				resultsData.voltage /= voltageQueue.size();
 
 				// *** compute time-of-flight scaling factor
-				
+
 				resultsData.timeScale = resultsData.potentialAfter;
 				resultsData.timeScale -= Grid_3d::potential(system->geomTable,system->gridTable,backIndex->position(),backIndex->tetIndex());
 				resultsData.timeScale /= resultsData.voltage;
@@ -1042,11 +1044,11 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			clock_t startClock = std::clock();
 			#endif
 
-			if (!options.resultsFile.empty()) 
+			if (!options.resultsFile.empty())
 				resultsHandle.push(resultsData);
-			if (!options.trajectoryFile.empty()) 
+			if (!options.trajectoryFile.empty())
 				trajectoryHandle.push(resultsData.eventIndex,resultsData.nodeNumber.toValue(),resultsData.timeScale,resultsData.trajectory);
-			
+
 			#ifdef VERBOSE
 			info::begin() << "*** Clocks (file output): ";
 			info::out() << (std::clock() - startClock) / static_cast<float>(CLOCKS_PER_SEC)  * 1.0e3f;
@@ -1060,7 +1062,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			#ifdef VERBOSE
 			clock_t startClock = std::clock();
 			#endif
-			
+
 			if ((options.initEventCnt + resultsData.eventIndex) % options.dumpInterval == 0 && !options.dumpFile.empty())
 				File_Io::writeSystem(options.dumpFile.c_str(),*system,resultsData.eventIndex);
 
@@ -1069,7 +1071,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			if ((options.initEventCnt + resultsData.eventIndex) % options.surfaceInterval == 0 && !options.surfaceFile.empty())
 				surfaceHandle.push(resultsData.eventIndex,surfaceTable);
-			
+
 			#ifdef VERBOSE
 			info::begin() << "*** Clocks (backup/surface): ";
 			info::out() << (std::clock() - startClock) / static_cast<float>(CLOCKS_PER_SEC)  * 1.0e3f;
@@ -1082,7 +1084,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			std::sprintf(filename,"%s.%08u.csv","gridStatus",eventCnt);
 			//Debug::writeData(filename,*system,',','\n');
-			
+
 			std::sprintf(filename,"%s.%08u.vtk","surfaceStatus",eventCnt);
 			//Debug::writeData_PARAVIEW_surfaceCells(filename,surfaceTable,*system);
 
@@ -1091,7 +1093,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			std::sprintf(filename,"%s.%08u","surfaceTrajectories",eventCnt);
 			//File_Io::write_surfaceTrajectories(filename,surfaceTable,*system,1e-6f,File_Io::ASCII);
-			
+
 			#endif
 		}
 
