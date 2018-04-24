@@ -645,25 +645,25 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 	// BEGIN ADDED BY M. ASHTON
   // *** assign ids to each atom based on their coordination numbers.
 
-    int nNodes = system->gridTable.numNodes();
-    for (int i=0; i < nNodes; i++)
-    {
-        if (system->gridTable.node(i).id().toValue() >= 10)
-        {
-            int numNeighbours = 0;
-            for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
-            {
-                int neighborIndex = system->gridTable.node(i).neighbour(j);
-                if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
-                {
-                    numNeighbours++;
-                }
-            }
-            int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
-            system->gridTable.node(i).setId(newId);
-            if (newId > 19) system->gridTable.node(i).setId(19);
-        }
-    }
+    // int nNodes = system->gridTable.numNodes();
+    // for (int i=0; i < nNodes; i++)
+    // {
+    //     if (system->gridTable.node(i).id().toValue() >= 10)
+    //     {
+    //         int numNeighbours = 0;
+    //         for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
+    //         {
+    //             int neighborIndex = system->gridTable.node(i).neighbour(j);
+    //             if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
+    //             {
+    //                 numNeighbours++;
+    //             }
+    //         }
+    //         int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
+    //         system->gridTable.node(i).setId(newId);
+    //         if (newId > 19) system->gridTable.node(i).setId(19);
+    //     }
+    // }
 	// END ADDED BY M. ASHTON
 
 	// *** start evaporation sequence
@@ -770,29 +770,29 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 			// BEGIN ADDED BY M. ASHTON
       //for each cell that neighbored the evaporated atom,
-      for (int i = 0; i < system->gridTable.node(resultsData.nodeIndex).numNeighbours(); i++)
-      {
-          const int nnIndex = system->gridTable.node(resultsData.nodeIndex).neighbour(i);
-          if (system->gridTable.id(nnIndex) == system->configTable[options.vacuumName.c_str()].id() && system->geomTable.voronoiArea(resultsData.nodeIndex,nnIndex,1.0f) > 0.0f)
-          {
-              ; // it's just a vacuum node
-          }
-
-          else // it's not a vacuum node, so reduce its id by one (id's are based on coordination number).
-          {
-              int oldId = system->configTable[system->gridTable.node(nnIndex).id()].id().toValue();
-              int newId = 0;
-              if (oldId % 10 == 0 or oldId < 10)
-              {
-                  newId = oldId;
-              }
-              else
-              {
-                  newId = oldId - 1;
-              }
-              system->gridTable.node(nnIndex).setId(newId);
-          }
-      }
+      // for (int i = 0; i < system->gridTable.node(resultsData.nodeIndex).numNeighbours(); i++)
+      // {
+      //     const int nnIndex = system->gridTable.node(resultsData.nodeIndex).neighbour(i);
+      //     if (system->gridTable.id(nnIndex) == system->configTable[options.vacuumName.c_str()].id() && system->geomTable.voronoiArea(resultsData.nodeIndex,nnIndex,1.0f) > 0.0f)
+      //     {
+      //         ; // it's just a vacuum node
+      //     }
+			//
+      //     else // it's not a vacuum node, so reduce its id by one (id's are based on coordination number).
+      //     {
+      //         int oldId = system->configTable[system->gridTable.node(nnIndex).id()].id().toValue();
+      //         int newId = 0;
+      //         if (oldId % 10 == 0 or oldId < 10)
+      //         {
+      //             newId = oldId;
+      //         }
+      //         else
+      //         {
+      //             newId = oldId - 1;
+      //         }
+      //         system->gridTable.node(nnIndex).setId(newId);
+      //     }
+      // }
 			// END ADDED BY M. ASHTON
 
       #ifdef VERBOSE
