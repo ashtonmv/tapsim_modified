@@ -586,7 +586,7 @@ void update_coordination(System_3d* system)
 	        //if (newId > 19)
 					//{
 					info::out() << newId << std::endl;
-					system->gridTable.node(i).setId(19);
+					//system->gridTable.node(i).setId(19);
 					//}
 	    }
 	}
