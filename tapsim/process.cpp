@@ -644,26 +644,26 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 	// BEGIN ADDED BY M. ASHTON
   // *** assign ids to each atom based on their coordination numbers.
-
-    // int nNodes = system->gridTable.numNodes();
-    // for (int i=0; i < nNodes; i++)
-    // {
-    //     if (system->gridTable.node(i).id().toValue() >= 10)
-    //     {
-    //         int numNeighbours = 0;
-    //         for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
-    //         {
-    //             int neighborIndex = system->gridTable.node(i).neighbour(j);
-    //             if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
-    //             {
-    //                 numNeighbours++;
-    //             }
-    //         }
-    //         int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
-    //         system->gridTable.node(i).setId(newId);
-    //         if (newId > 19) system->gridTable.node(i).setId(19);
-    //     }
-    // }
+  update_coordination();
+  // int nNodes = system->gridTable.numNodes();
+  // for (int i=0; i < nNodes; i++)
+  // {
+  //     if (system->gridTable.node(i).id().toValue() >= 10)
+  //     {
+  //         int numNeighbours = 0;
+  //         for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
+  //         {
+  //             int neighborIndex = system->gridTable.node(i).neighbour(j);
+  //             if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
+  //             {
+  //                 numNeighbours++;
+  //             }
+  //         }
+  //         int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
+  //         system->gridTable.node(i).setId(newId);
+  //         if (newId > 19) system->gridTable.node(i).setId(19);
+  //     }
+  // }
 	// END ADDED BY M. ASHTON
 
 	// *** start evaporation sequence
@@ -767,8 +767,8 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 			#endif
 
  			evap_takeAway(system,&surfaceTable,resultsData.nodeIndex);
+			update_coordination(system);  // ADDED BY M. ASHTON
 
-			// BEGIN ADDED BY M. ASHTON
       //for each cell that neighbored the evaporated atom,
       // for (int i = 0; i < system->gridTable.node(resultsData.nodeIndex).numNeighbours(); i++)
       // {
@@ -793,7 +793,6 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
       //         system->gridTable.node(nnIndex).setId(newId);
       //     }
       // }
-			// END ADDED BY M. ASHTON
 
       #ifdef VERBOSE
       info::begin() << "Selected atom is removed from grid (#" << resultsData.eventIndex << ")." << std::endl;

@@ -17,7 +17,7 @@
 * You should have received a copy of the GNU General Public License     *
 * along with this program.  If not, see 'http://www.gnu.org/licenses'   *
 *                                                                       *
-************************************************************************/ 
+************************************************************************/
 
 #include "surface_3d.h"
 
@@ -101,7 +101,7 @@ void Surface_3d::Table::update(const int nodeIndex, const System_3d& system)
 
 		if (!system.configTable[system.gridTable.id(neighIndex)].removable() && acceptRemovable) continue;
 
-		// *** (redundant) test if the neighbour node has at least one vacuum-node in 
+		// *** (redundant) test if the neighbour node has at least one vacuum-node in
 		// *** its neighbourhood
 
 		for (int j = 0; j < system.gridTable.node(neighIndex).numNeighbours(); j++)
@@ -123,7 +123,7 @@ void Surface_3d::Table::update(const int nodeIndex, const System_3d& system)
 Geometry_3d::Point Surface_3d::Table::normal(const int nodeIndex, const System_3d& system) const
 {
 	if (_nodes.find(nodeIndex) == _nodes.end()) return Geometry_3d::Point(0.0f);
-	
+
 	std::set<int> localNodes;
 	system.geomTable.adjacentNodes(nodeIndex,&localNodes,3); // limit search to 3rd neighbours
 
@@ -136,7 +136,7 @@ Geometry_3d::Point Surface_3d::Table::normal(const int nodeIndex, const System_3
 		while (localNodes.end() != i)
 		{
 			if (system.gridTable.node(*i).id() == _vacuumId) vacNodes.push_back(*i);
-			
+
 			if (_nodes.find(*i) == _nodes.end())
 			{
 				const std::set<int>::const_iterator j(i);
@@ -158,13 +158,13 @@ Geometry_3d::Point Surface_3d::Table::normal(const int nodeIndex, const System_3
 	Geometry_3d::Point value = Geometry_3d::find_best_plane(coords);
 
 	// *** adjust orientation
-	
+
 	Geometry_3d::Point tmp;
 	for (std::vector<int>::const_iterator i = vacNodes.begin(); i != vacNodes.end(); i++)
 		tmp += system.geomTable.nodeCoords(*i) - system.geomTable.nodeCoords(nodeIndex);
-	
+
 	if (value * tmp < 0.0) value *= -1.0f;
-	
+
 	return value;
 }
 
@@ -172,20 +172,20 @@ Surface_3d::Nodeset::const_iterator Surface_3d::Table::apex(const System_3d& sys
 {
 	Surface_3d::Nodeset::const_iterator topNode = _nodes.begin();
 	float topCoordinate = system.geomTable.nodeCoords(topNode->index()).z();
-	
+
 	// ***
-	
+
 	for (Nodeset::const_iterator i = _nodes.begin(); i != _nodes.end(); i++)
 	{
 		const float coordinate = system.geomTable.nodeCoords(i->index()).z();
-		
+
 		if (coordinate > topCoordinate)
 		{
 			topCoordinate = coordinate;
 			topNode = i;
 		}
 	}
-	
+
 	return topNode;
 }
 
@@ -196,15 +196,15 @@ void Surface_3d::evap_compute_specificFields(Surface_3d::Table* surfaceTable, co
 	/* probably this is just a bad hack ... */
 
 	if (surfaceTable == 0 || surfaceTable->nodes().empty()) return;
-	
+
 	Surface_3d::Nodeset::iterator i = surfaceTable->nodes().begin();
 
 	float value = system.gridTable.field_o1(i->index(),system.geomTable).length();
 	value /= system.configTable[system.gridTable.id(i->index())].evapField();
 	advance(i,1);
-	
+
 	float maxValue(value);
-	
+
 	while (surfaceTable->nodes().end() != i)
 	{
 		value = system.gridTable.field_o1(i->index(),system.geomTable).length();
@@ -231,7 +231,7 @@ namespace
 
 		if (system.configTable.temperature() <= 0.0)
 			throw std::runtime_error("probBoltzmann(): Cannot compute probability with chosen temperature value!");
-		
+
 
 		const float kBoltzmann = 8.6173431e-5; // [kBoltzmann] =  eV/K
 
@@ -252,14 +252,14 @@ namespace
 
 			sum += probability;
 		}
-		
+
 		// *** normalize
 
 		for (Surface_3d::Nodeset::iterator i = surfaceTable->nodes().begin(); i != surfaceTable->nodes().end(); i++)
 		{
 			float value = i->probability();
 			value /= sum;
-			
+
 			const_cast<Surface_3d::Node&>(*i).setProbability(value);
 		}
 	}
@@ -277,7 +277,7 @@ namespace
 
 		for (Surface_3d::Nodeset::iterator i = surfaceTable->nodes().begin(); i != surfaceTable->nodes().end(); i++)
 		{
-			
+
 			float value = system.gridTable.field_o1(i->index(),system.geomTable).length();
 			value /= system.configTable[system.gridTable.id(i->index())].evapField();
 			const_cast<Surface_3d::Node&>(*i).setProbability(value);
@@ -299,7 +299,7 @@ namespace
 	inline void probLinear_force(Surface_3d::Table* surfaceTable, const System_3d& system)
 	{
 		// computes the probabiliy for field evapoation of each atom by taking into account
-		// the acting force on the atom, calculation is started from scratch ignoring any 
+		// the acting force on the atom, calculation is started from scratch ignoring any
 		// formerly conducted calculations (e.g. from evap_compute_specificFields() above)
 
 		float sum(0.0);
@@ -334,11 +334,11 @@ namespace
 		const float epsilon0 = 8.85418781762e-12; // [epsilon0] = As/(Vm)
 
 		float sum(0.0);
-		
+
 		for (Surface_3d::Nodeset::iterator i = surfaceTable->nodes().begin(); i != surfaceTable->nodes().end(); i++)
 		{
 			const Grid_3d::Node& node = system.gridTable.node(i->index());
-			
+
 			// *** BEGIN BUGFIX +++ PROPER SCALING
 			float surfaceArea(0.0f);
 			// *** END BUGFIX +++ PROPER SCALING
@@ -347,7 +347,7 @@ namespace
 			for (int j = 0; j < node.numNeighbours(); j++)
 			{
 				const int neighIndex = node.neighbour(j);
-				
+
 				float value = system.gridTable.potential(neighIndex);
 				value -= system.gridTable.potential(i->index());
 				value *= value;
@@ -356,7 +356,7 @@ namespace
 
 				const float epsilon_1 = 1.0 / system.configTable[system.gridTable.node(i->index()).id()].epsilon();
 				const float epsilon_2 = 1.0 / system.configTable[system.gridTable.node(neighIndex).id()].epsilon();
-				
+
 				value *= epsilon_2 - epsilon_1;
 
 				// *** BEGIN BUGFIX +++ PROPER SCALING
@@ -366,15 +366,15 @@ namespace
 				corrArea *= epsilon_1 + epsilon_2;
 				surfaceArea += corrArea;
 				// *** END BUGFIX +++ PROPER SCALING
-				
+
 				MathVector3d<float> localForce = system.geomTable.nodeCoords(neighIndex);
 				localForce -= system.geomTable.nodeCoords(i->index());
 				localForce /= localForce*localForce;
 				localForce *= value;
-				
+
 				force += localForce;
 			}
-			
+
 			float probValue = force.length();
 
 			// *** BEGIN BUGFIX +++ PROPER SCALING
@@ -535,7 +535,7 @@ void evap_takeAway(System_3d* system, Surface_3d::Table* surfaceTable, const int
 					break;
 				}
 			}
-			
+
 			if (flag) lonelySites.push_back(neighIndex);
 		}
 
@@ -551,7 +551,7 @@ void evap_takeAway(System_3d* system, Surface_3d::Table* surfaceTable, const int
 			info::out() << "\t-> total number of detached atoms so far: " << lonelyCnt << std::endl;
 
 			// remove detached surface atoms
-			
+
 			for (std::list<int>::const_iterator i = lonelySites.begin(); i != lonelySites.end(); i++)
 			{
 				system->gridTable.node(*i).setId(surfaceTable->vacuumId());
@@ -560,5 +560,30 @@ void evap_takeAway(System_3d* system, Surface_3d::Table* surfaceTable, const int
 				surfaceTable->update(*i,*system);
 			}
 		}
+	}
+}
+
+/* ********** ----------- ********** */
+
+void update_coordination(System_3d* system)
+{
+	int nNodes = system->gridTable.numNodes();
+	for (int i=0; i < nNodes; i++)
+	{
+	    if (system->gridTable.node(i).id().toValue() >= 10)
+	    {
+	        int numNeighbours = 0;
+	        for (int j=0; j < system->gridTable.node(i).numNeighbours(); j++)
+	        {
+	            int neighborIndex = system->gridTable.node(i).neighbour(j);
+	            if (system->gridTable.node(neighborIndex).id().toValue() >= 10)
+	            {
+	                numNeighbours++;
+	            }
+	        }
+	        int newId = system->gridTable.node(i).id().toValue() + numNeighbours;
+	        system->gridTable.node(i).setId(newId);
+	        if (newId > 19) system->gridTable.node(i).setId(19);
+	    }
 	}
 }
