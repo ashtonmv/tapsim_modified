@@ -20,7 +20,7 @@
 * You should have received a copy of the GNU General Public License     *
 * along with this program.  If not, see 'http://www.gnu.org/licenses'   *
 *                                                                       *
-************************************************************************/ 
+************************************************************************/
 
 #include <set>
 
@@ -30,18 +30,18 @@ namespace Surface_3d
 {
 	enum ProbModes { PROB_LINEAR_FIELD, PROB_BOLTZMANN, PROB_LINEAR_FORCE, PROB_VORONOI_FLUX_FORCE } ;
 	enum EvapModes { EVAP_MAXIMUM, EVAP_MONTE_CARLO };
-	
+
 	class Node
 	{
 		public:
 			struct Compare
 			{
-				bool operator()(const Node& lhs, const Node& rhs) const 
+				bool operator()(const Node& lhs, const Node& rhs) const
 					{ return lhs.index() < rhs.index(); }
 			};
-			
+
 			// ***
-			
+
 			Node(const int indexValue =-1, const float probabilityValue =0.0f)
 				: _index(indexValue),
 				  _probability(probabilityValue)
@@ -60,7 +60,7 @@ namespace Surface_3d
 
 	typedef std::set<Node,Node::Compare> Nodeset;
 
-	class Table 
+	class Table
 	{
 		public:
 			Table();
@@ -77,14 +77,14 @@ namespace Surface_3d
 
 			void setVacuumId(const Configuration::NodeId value) { _vacuumId = value; }
 			Configuration::NodeId vacuumId() const { return _vacuumId; }
-			
+
 			void setScalingReference(const float value) { _scalingReference = value; }
 			float scalingReference() const { return _scalingReference; }
 
 		private:
 			Nodeset _nodes;
 			Configuration::NodeId _vacuumId;
-			
+
 			float _scalingReference;
 	};
 
@@ -102,5 +102,9 @@ MathVector3d<float> evap_initialVelocity(const Configuration::NodeId&, const Con
 // ***
 
 void evap_takeAway(System_3d* system, Surface_3d::Table* surfaceTable, const int nodeIndex);
+
+// ***
+
+void update_coordination(System_3d* system);
 
 #endif
