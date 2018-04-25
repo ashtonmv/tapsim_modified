@@ -644,7 +644,7 @@ void Process::evaporation(const EvaporationOptions& options, const std::string& 
 
 	// BEGIN ADDED BY M. ASHTON
   // *** assign ids to each atom based on their coordination numbers.
-  update_coordination();
+  update_coordination(system);
   // int nNodes = system->gridTable.numNodes();
   // for (int i=0; i < nNodes; i++)
   // {
